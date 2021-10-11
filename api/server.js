@@ -24,21 +24,22 @@ const server = express();
 
 server.use(session({
   name: 'chocolatechip',
-  secret: 'keep it secret!',
+  secret: 'keep this secret!', // should come from process.env.SECRET
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 1,
-    secure: true,
-    httpOnly: true
+    maxAge: 1000 * 60 * 60,
+    // secure: process.env.IS_PROD ? true : false, // true would mean cookies work only over HTTPS
+    secure: false,
+    httpOnly: false, // whether client JS can read the cookie
   },
   rolling: true,
-  resave: false,
-  saveUninitialized: false,
+  resave: false, // some session libs for storing the sessions in a db require this to be true
+  saveUninitialized: false, // if false no session is persisted unless client says so
   store: new Store({
     knex: require('../data/db-config'),
-    table: 'sessions',
+    tablename: 'sessions',
     sidfieldname: 'sid',
     createtable: true,
-    clearInterval: 1000 * 60 * 60
+    clearInterval: 1000 * 60 * 60,
   })
 }))
 

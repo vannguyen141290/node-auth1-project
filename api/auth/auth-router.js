@@ -3,7 +3,6 @@
 const router = require('express').Router()
 const User = require('../users/users-model')
 const {
-  restricted,
   checkUsernameFree,
   checkUsernameExists,
   checkPasswordLength
@@ -93,7 +92,17 @@ router.post('/login', checkUsernameExists, async (req, res, next) => {
  */
 
 router.get('/logout', (req, res, next) => {
-  console.log('get api/auth/logout')
+  if (req.session.user) {
+    req.session.destroy((err) => {
+      if (err) {
+        res.json({ message: 'something wrong. please try later' })
+      } else {
+        res.status(200).json({ message: "logged out" })
+      }
+    })
+  } else { next({ status: 200, message: "no session" }) }
+
+
 })
 
 
